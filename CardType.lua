@@ -1,0 +1,1 @@
+return {"MOB", "BIOME", "EQUIPMENT", "MAGIC", "SPECIAL"}
