@@ -1,0 +1,1 @@
+return { "PLAINS", "WATER", "NETHER", "END" }

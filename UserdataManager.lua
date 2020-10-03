@@ -1,4 +1,4 @@
-local _manager = {}
+local __manager = {}
 local cache = setmetatable({}, {__mode="kv"})
 local json = require "./lib/json"
 
@@ -7,7 +7,7 @@ local function is_valid_userdata(user_data)
     and type(user_data.available_deck) == "table"
 end 
 
-function _manager.deserialize(uuid)
+function __manager.deserialize(uuid)
     assert(type(uuid)=="string", "Given uuid must be a string type.")
     if cache[uuid] then return cache[uuid] end
     f = io.open(string.format("./users/%s.json", uuid))
@@ -22,7 +22,7 @@ function _manager.deserialize(uuid)
     else return nil end
 end
 
-function _manager.serialize(user_data)
+function __manager.serialize(user_data)
     assert(user_data, "Given user data must not be null")
     assert(is_valid_userdata(user_data), "Not a valid user data")
     f = io.open(string.format("./users/%s.json", user_data.uuid), "w+")
@@ -34,4 +34,4 @@ function _manager.serialize(user_data)
     f:close()
 end
 
-return _manager
+return __manager

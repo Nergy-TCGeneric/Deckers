@@ -6,7 +6,7 @@ local CardRegistry = require "../CardRegistry"
 -- Test #1. Registring card dummy and validating it
 local function test1()
     dummy = {
-        health = 15,
+        lifepoint = 15,
         type = "MOB",
         atk_str = 2,
         id = "dummy_card1"
@@ -14,7 +14,7 @@ local function test1()
     CardRegistry.register(dummy)
     target = CardRegistry.get("dummy_card1")
     assert(
-        dummy.health == target.health
+        dummy.lifepoint == target.lifepoint
         and dummy.type == target.type
         and dummy.atk_str == target.atk_str
         and dummy.id == target.id,
@@ -25,7 +25,7 @@ end
 -- Test #2. Filtering invalid card
 local function test2()
     invalid = {
-        health = 20,
+        lifepoint = 20,
         type = "INVALID_TYPE",
         atk_str = 2,
         id = "invalid_card"
