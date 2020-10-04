@@ -7,6 +7,9 @@ local __entities = {}
     2. atk_str = Attack strength. Each turn the entity will try to inflict the damage base on this value.
     3. defense = How much inflicted damage to self will be reduced.
     4. map_id = Mapping identifier. could be anything, such as minecraft:chicken.
+    5. behavior = Decides how this mob will behave during battle. Must be one of these : (Passive, Neutral, Hostile)
+    6. size = determines how much this mob will occupy adjacent tiles. 2 means it occupies 2 * 2 tiles.
+    7. atk_range = Attack range. By each tick, this entity will try to attack opponent entity within this range.
 ]]--
 
 local function is_valid_context_format(entity_ctx)
@@ -15,6 +18,10 @@ local function is_valid_context_format(entity_ctx)
         and entity_ctx.atk_str ~= nil
         and entity_ctx.defense ~= nil
         and entity_ctx.map_id ~= nil
+        and (entity_ctx.behavior == "PASSIVE" or entity_ctx.behavior == "NEUTRAL" or entity_ctx.behavior == "HOSTILE")
+        and entity_ctx.size >= 1
+        and entity_ctx.atk_range >= 1
+        and entity_ctx.move_range >= 1
 end
 
 function __registry.register(entity_id, entity_ctx)
