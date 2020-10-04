@@ -1,3 +1,6 @@
+-- Copied from : https://gist.github.com/jrus/3197011
+-- Added math.randomseed() to guarantee the randomness
+
 local random = math.random
 math.randomseed(os.time())
 return function()

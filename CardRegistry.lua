@@ -1,7 +1,7 @@
--- Manages registration of cards used on Decker.
+-- Manages registration of __cards used on Decker.
 local CardType = require "./CardType"
 
-local cards = {}
+local __cards = {}
 local _registry = {}
 
 --[[
@@ -26,16 +26,20 @@ end
 
 function _registry.register(card)
     assert(is_valid_card(card), "Invalid card is given!")
-    cards[card.id] = card
+    __cards[card.id] = card
 end
 
 function _registry.get(card_id)
-    return cards[card_id]
+    assert(card_id, "Card id is invalid!")
+    if __cards[card_id] == nil then return nil end
+    local clone = {}
+    for k, v in pairs(__cards[card_id]) do clone[k] = v end
+    return clone
 end
 
 function _registry.list()
-    clone = {}
-    for k, v in pairs(cards) do clone[k] = v end
+    local clone = {}
+    for k, v in pairs(__cards) do clone[k] = v end
     return clone
 end
 

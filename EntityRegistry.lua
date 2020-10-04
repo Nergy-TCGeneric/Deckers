@@ -23,9 +23,15 @@ function __registry.register(entity_id, entity_ctx)
     __entities[entity_id] = entity_ctx
 end
 
+function __registry.unregister(entity_id)
+    __entities[entity_id] = nil
+end
+
 function __registry.get(entity_id)
+    assert(entity_id, "Invalid entity id is given.")
+    if __entities[entity_id] == nil then return nil end
     local clone = {}
-    clone[entity_id] = __entities[entity_id]
+    for k, v in pairs(__entities[entity_id]) do clone[k] = v end
     return clone
 end
 
