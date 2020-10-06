@@ -77,6 +77,7 @@ function __tiles:move_to_relatively(entity, diff)
                 entity = entity
             }
             return true
+        end
     end
     error("Given entity isn't on tile. Did you forgot using move_to?")
 end

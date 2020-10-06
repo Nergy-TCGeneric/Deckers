@@ -1,0 +1,10 @@
+{
+    "lifepoint": 20,
+    "atk_str": 3,
+    "defense": 0,
+    "map_id": "minecraft:skeleton",
+    "behavior": "HOSTILE",
+    "size": 1,
+    "atk_range": 5,
+    "move_range": 1
+}

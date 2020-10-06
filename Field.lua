@@ -107,7 +107,7 @@ local function battle_loop()
                end
           end
           for _, v in pairs(self.tiles:entities()) do
-               if #v == 0 then return
+               if #v == 0 then return end
           end
      end
 end
