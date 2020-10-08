@@ -1,0 +1,10 @@
+{
+    "lifepoint": 20,
+    "atk_str": 2,
+    "defense": 0,
+    "map_id": "minecraft:spider",
+    "behavior": "HOSTILE",
+    "size": 1,
+    "atk_range": 1,
+    "move_range": 1
+}

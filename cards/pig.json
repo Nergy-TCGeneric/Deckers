@@ -1,0 +1,10 @@
+{
+    "lifepoint": 20,
+    "atk_str": 0,
+    "defense": 0,
+    "map_id": "minecraft:pig",
+    "behavior": "PASSIVE",
+    "size": 1,
+    "atk_range": 1,
+    "move_range": 1
+}
