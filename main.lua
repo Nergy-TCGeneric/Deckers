@@ -5,7 +5,7 @@ local EventDeathEventHandler = require "./EntityDeathEventHandler"
 local PhaseStartEventHandler = require "./PhaseStartEventHandler"
 local GameEndEventHandler = require "./GameEndEventHandler"
 
+tests.test_all()
 EventManager.register(EventDeathEventHandler, "ENTITY_DEATH")
 EventManager.register(PhaseStartEventHandler, "PHASE_START")
 EventManager.register(GameEndEventHandler, "GAME_END")
-tests.test_all()
