@@ -7,6 +7,7 @@ local PhaseStartEventHandler = require "./PhaseStartEventHandler"
 local GameEndEventHandler = require "./GameEndEventHandler"
 local EntityRegistry = require "./EntityRegistry"
 
+tests.test_all()
 EventManager.register(EventDeathEventHandler, "ENTITY_DEATH")
 EventManager.register(PhaseStartEventHandler, "PHASE_START")
 EventManager.register(GameEndEventHandler, "GAME_END")
@@ -27,5 +28,3 @@ for file in io.popen(command):lines() do
         f:close()
     end
 end
-
-tests.test_all()

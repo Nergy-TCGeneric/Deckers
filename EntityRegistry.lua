@@ -13,8 +13,7 @@ local __entities = {}
 ]]--
 
 local function is_valid_context_format(entity_ctx)
-    return entity_ctx.lifepoint ~= nil
-        and entity_ctx.lifepoint > 0
+    return entity_ctx.lifepoint > 0
         and entity_ctx.atk_str ~= nil
         and entity_ctx.defense ~= nil
         and entity_ctx.map_id ~= nil
@@ -32,6 +31,10 @@ end
 
 function __registry.unregister(entity_id)
     __entities[entity_id] = nil
+end
+
+function __registry.unregister_all()
+    __entities = {}
 end
 
 function __registry.get(entity_id)
