@@ -1,0 +1,7 @@
+{
+    "name_id":"biome:plains_card",
+    "type":"BIOME",
+    "cost_type":"ACTION",
+    "cost":1,
+    "action_id":"biome:plains"
+}

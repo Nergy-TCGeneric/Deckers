@@ -1,0 +1,5 @@
+{
+    "name_id":"mob:creeper_card",
+    "type":"MOB",
+    "mob_id":"entity:creeper"
+}

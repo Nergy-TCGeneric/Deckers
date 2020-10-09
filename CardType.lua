@@ -1,1 +1,6 @@
-return {"MOB", "BIOME", "EQUIPMENT", "MAGIC", "SPECIAL"}
+return {
+    mob = "MOB",
+    biome = "BIOME",
+    equipment = "EQUIPMENT",
+    magic = "MAGIC",
+    special = "SPECIAL"}

@@ -6,5 +6,6 @@
     "behavior": "PASSIVE",
     "size": 1,
     "atk_range": 1,
-    "move_range": 1
+    "move_range": 1,
+    "entity_id":"entity:pig"
 }

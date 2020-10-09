@@ -1,11 +1,22 @@
 local CardBase = require "./CardBase"
+local ActionRegistry = require "./ActionRegistry"
 
 local __targetcard = {}
 
-function __targetcard:create(id, name_id, type, handler_uuid, target_idx)
+--[[
+    Targeting Card has following distinctive properties:
+    1. act(function) : Determines what this card do on field.
+    2. cost : Determines the 'cost' when this card draw.
+    3. cost_type : Determines 'cost type'. MUST be one of these : (Mana / Action)
+    4. action_id : An action id to get 'action' from ActionRegistry.
+]]
+
+function __targetcard:create(id, name_id, type, handler_uuid, cost_type, cost, action_id)
     local inst = CardBase:create(id, name_id, type, handler_uuid)
-    inst.target_idx = target_idx
     inst.type = type
+    inst.cost_type = cost_type
+    inst.cost = cost
+    inst.act = ActionRegistry.get(action_id) or function(field, target_ctx) end
     return inst
 end
 

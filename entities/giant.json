@@ -6,5 +6,6 @@
     "behavior": "HOSTILE",
     "size": 3,
     "atk_range": 1,
-    "move_range": 1
+    "move_range": 1,
+    "entity_id":"entity:giant"
 }

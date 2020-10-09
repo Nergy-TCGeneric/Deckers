@@ -3,6 +3,7 @@
 local TileData = require "./TileData"
 local CardStack = require "./CardStack"
 local Deck = require "./Deck"
+local BiomeType = require "./BiomeType"
 local EventManager = require "./EventManager"
 local GenerateUUID = require "./UUIDGenerator"
 
@@ -109,7 +110,7 @@ local function battle_loop(field)
      for _, tile in pairs(field.tiles:list()) do set_entity_target(field, tile.entity) end
      while not field.active_cards:get_empty_deck_owner() do
           for _, tile in pairs(field.tiles:list()) do
-               -- TODO: Move every unit, at single turn. this method just only moves one unit at that time.
+               -- TODO: Move every unit, at a single turn. this method just only moves one unit at that time.
                local L1, L2 = field.tiles:get_entity_location(tile.entity), field.tiles:get_entity_location(tile.entity.target)
                if not (L1 and L2) then break end
                if field.tiles:distance(L1, L2) <= tile.entity.atk_range and tile.entity.behavior == "HOSTILE" then
@@ -131,7 +132,7 @@ function _field:create_instance(first_userdata, second_userdata)
      inst.users[first_userdata.uuid] = get_initial_userstat(first_userdata)
      inst.users[second_userdata.uuid] = get_initial_userstat(second_userdata)
      inst.phase = 0
-     inst.biome = nil
+     inst.biome = BiomeType.plains
      inst.tiles = TileData:create(8)
      inst.graveyard = CardStack:create()
      inst.active_cards = Deck:create()

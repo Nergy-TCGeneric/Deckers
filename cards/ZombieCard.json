@@ -1,0 +1,5 @@
+{
+    "name_id":"mob:zombie_card",
+    "type":"MOB",
+    "mob_id":"entity:zombie"
+}

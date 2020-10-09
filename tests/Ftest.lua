@@ -26,7 +26,7 @@ end
 -- Test #3: Putting some fake cards and proceeding turn. Does death event invoked with expected data?
 local function func3()
     local f1 = Field:create_instance({uuid = "fake_uuid_1", selected_deck = {}}, {uuid = "fake_uuid_2", selected_deck = {}})
-    EntityRegistry.register("spider", {
+    EntityRegistry.register({
         lifepoint = 15,
         atk_str = 2,
         defense = 0,
@@ -34,9 +34,10 @@ local function func3()
         behavior = "NEUTRAL",
         size = 1,
         atk_range = 1,
-        move_range = 1
+        move_range = 1,
+        entity_id = "entity:spider"
     })
-    EntityRegistry.register("killer", {
+    EntityRegistry.register({
         lifepoint = 25,
         atk_str = 20,
         defense = 0,
@@ -44,10 +45,11 @@ local function func3()
         behavior = "HOSTILE",
         size = 1,
         atk_range = 1,
-        move_range = 1
+        move_range = 1,
+        entity_id = "entity:killer"
     })
-    f1:spawn_entity(EntityCard:create("some_uuid4_format", "fake_one", "fake_uuid_1", "killer"), {x = 1, y = 1})
-    f1:spawn_entity(EntityCard:create("other_uuid4_format", "fake_two", "fake_uuid_2", "spider"), {x = 7, y = 7})
+    f1:spawn_entity(EntityCard:create("some_uuid4_format", "fake_one", "fake_uuid_1", "entity:killer"), {x = 1, y = 1})
+    f1:spawn_entity(EntityCard:create("other_uuid4_format", "fake_two", "fake_uuid_2", "entity:spider"), {x = 7, y = 7})
 
     local test_handler = EventHandlerInterface:create()
     test_handler.update = function(self, event)

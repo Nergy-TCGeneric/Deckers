@@ -6,29 +6,23 @@ local CardRegistry = require "../CardRegistry"
 -- Test #1. Registring card dummy and validating it
 local function test1()
     dummy = {
-        lifepoint = 15,
+        name_id = "dummy_card",
         type = "MOB",
-        atk_str = 2,
-        id = "dummy_card1"
+        mob_id = "dummy"
     }
     CardRegistry.register(dummy)
-    target = CardRegistry.get("dummy_card1")
+    target = CardRegistry.get("dummy_card")
     assert(
-        dummy.lifepoint == target.lifepoint
-        and dummy.type == target.type
-        and dummy.atk_str == target.atk_str
-        and dummy.id == target.id,
-        "Test #1 failed"
+        dummy.name_id == target.name_id and
+        dummy.type == target.type,
+        "#1. Registered card data and actual card data doesn't match"
     )
 end
 
 -- Test #2. Filtering invalid card
 local function test2()
     invalid = {
-        lifepoint = 20,
-        type = "INVALID_TYPE",
-        atk_str = 2,
-        id = "invalid_card"
+        type="MOB"
     }
     local stat, err = pcall(function()
         CardRegistry.register(invalid)
