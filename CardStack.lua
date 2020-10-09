@@ -14,7 +14,8 @@ end
 function __stack:push(v)
     if not is_valid_type(v) then error("Only card type is acceptable") end
     if #self.__entries >= 10 then self.__entries:remove(1) end
-    self.__entries:insert(v)
+    -- self.__entries:insert(v)
+    table.insert(self.__entries, v)
 end
 
 function __stack:pop()

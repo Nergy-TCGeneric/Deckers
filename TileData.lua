@@ -6,7 +6,6 @@ local __tiles= {}
     1. size - Determines tile's maximum horizontal and vertical length limit.
     2. tile - A list of entities' position and entity data.
     -> A tile has no obstacles. it only consists of bunch of user's mobs.
-    3. entities - For fast indexing. shows which player has which entities.
 ]]
 
 local function get_occupying_area(loc, size)
@@ -18,7 +17,6 @@ function __tiles:create(size)
     local inst = setmetatable({}, self)
     self.__index = self
     inst.tile = {}
-    inst.entities = {}
     inst.size = size
     return inst
 end
@@ -37,8 +35,6 @@ function __tiles:spawn_entity(entity, loc)
         loc = loc,
         entity = entity
     })
-    if self.entities[entity.handler_uuid] == nil then self.entities[entity.handler_uuid] = {} end
-    table.insert(self.entities[entity.handler_uuid], entity)
     return true
 end
 
@@ -47,9 +43,6 @@ function __tiles:remove_entity(entity)
     for idx, tile in pairs(self.tile) do
         if tile.entity == entity then
             table.remove(self.tile, idx)
-            for i, v in ipairs(self.entities[entity.handler_uuid]) do
-                if v == entity then table.remove(self.entities[entity.handler_uuid], i) break end
-            end
             return true
         end
     end
@@ -111,23 +104,11 @@ function __tiles:is_entity_movable_to(loc, entity)
 end
 
 function __tiles:clear()
-    self.entities = {}
     self.tile = {}
 end
 
 function __tiles:list()
     return self.tile
-end
-
-function __tiles:get_entities()
-    return self.entities
-end
-
-function __tiles:has_no_entities()
-    for _, v in pairs(self.entities) do
-        if #v == 0 then return true end
-    end
-    return false
 end
 
 return __tiles

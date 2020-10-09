@@ -2,24 +2,26 @@
 
 local TileData = require "./TileData"
 local CardStack = require "./CardStack"
+local Deck = require "./Deck"
 local EventManager = require "./EventManager"
 local GenerateUUID = require "./UUIDGenerator"
 
-local _field = {
-     id = nil,
-     first_user = nil,
-     second_user = nil,
-     phase = 1,
-     biome = nil,
-     tiles = {},
-     graveyard = {},
-     card_cache = {}
-}
+local _field = {}
+
+--[[
+     Field has following these properties:
+     1. id : A unique identifier of field.
+     2. users : List of players.
+     3. phase : equivalent to 'turn'.
+     4. biome : indicates which this field's biome is.
+     5. tiles : instance of TileData.
+     6. graveyard : instance of CardStack.
+     7. active_cards : instance of Deck.
+]]
 
 -- TODO: Load these values from global config.yml
 local function get_initial_userstat(user_data)
      return {
-          uuid = user_data.uuid,
           stocks = 2,
           available_cards = user_data.selected_deck,
           manas = 10,
@@ -27,38 +29,36 @@ local function get_initial_userstat(user_data)
      }
 end
 
-local function all_cards_to_graveyard()
-     for _, tile in pairs(self.tiles:list()) do
-          graveyard.push(tile.entity)
+local function all_cards_to_graveyard(field)
+     for _, deck in pairs(field.active_cards:get_decks()) do
+          for __, card in ipairs(deck) do
+               field.graveyard:push(card)
+          end
      end
+     field.active_cards:clear()
 end
 
 local function is_game_ended(field)
      local ctx = { 
           ended = false,
-          winner = {}
+          lose = {}
      }
-     if field.first_user.stocks <= 0 then
-          ctx.ended = true
-          table.insert(ctx.winner, second_user) end
-     if field.second_user.stocks <= 0 then
-          ctx.ended = true
-          table.insert(ctx.winner, first_user) end
-     if #ctx.winner > 2 then ctx.winner = {} end
+     for uuid, stat in pairs(field.users) do
+          if stat.stocks <= 0 then
+               ctx.ended = true
+               table.insert(ctx.lose, uuid)
+          end
+     end
      return ctx
 end
 
 -- Remind that 'Commander' requires only two players
 local function set_entity_target(field, entity)
      math.randomseed(os.time())
-     for uuid, entities in pairs(field.tiles:get_entities()) do
-          if uuid ~= entity.handler_uuid then
-               if #entities == 0 then return
-               elseif #entities == 1 then entity.target = entities[1]
-               else entity.target = entities[math.random(#entities)] end
-               break
-          end
-     end
+     local opponent = field.active_cards:get_opponent_deck(entity.handler_uuid)
+     if #opponent == 0 then return
+     elseif #opponent == 1 then entity.target = opponent[1].mob
+     else entity.target = opponent[math.random(#opponent)].mob end
 end
 
 local function calculate_pathway(from, to, length) -- returns sequence of {dx, dy} with given 'length'
@@ -97,8 +97,9 @@ local function attack_entity(attacker, victim, field)
                field = field
           }, "ENTITY_DEATH")
           field.tiles:remove_entity(victim)
-          -- TODO: Refactoring is required, since this method requires 'card' type, but given parameter's type is 'entity'
-          -- field.graveyard:push(victim)
+          local card = field.active_cards:get_by_entity(victim)
+          field.graveyard:push(card)
+          field.active_cards:remove_by_card(card)
           attacker.target = set_entity_target(field, attacker)
      end
 end
@@ -106,10 +107,11 @@ end
 -- Attack first, Move if cannot.
 local function battle_loop(field)
      for _, tile in pairs(field.tiles:list()) do set_entity_target(field, tile.entity) end
-     while not field.tiles:has_no_entities() do
+     while not field.active_cards:get_empty_deck_owner() do
           for _, tile in pairs(field.tiles:list()) do
                -- TODO: Move every unit, at single turn. this method just only moves one unit at that time.
                local L1, L2 = field.tiles:get_entity_location(tile.entity), field.tiles:get_entity_location(tile.entity.target)
+               if not (L1 and L2) then break end
                if field.tiles:distance(L1, L2) <= tile.entity.atk_range and tile.entity.behavior == "HOSTILE" then
                     attack_entity(tile.entity, tile.entity.target, field)
                else
@@ -125,12 +127,14 @@ function _field:create_instance(first_userdata, second_userdata)
      local inst = setmetatable({}, self)
      self.__index = self
      inst.id = GenerateUUID()
-     inst.first_user = get_initial_userstat(first_userdata)
-     inst.second_user = get_initial_userstat(second_userdata)
+     inst.users = {}
+     inst.users[first_userdata.uuid] = get_initial_userstat(first_userdata)
+     inst.users[second_userdata.uuid] = get_initial_userstat(second_userdata)
      inst.phase = 0
      inst.biome = nil
      inst.tiles = TileData:create(8)
      inst.graveyard = CardStack:create()
+     inst.active_cards = Deck:create()
      return inst
 end
 
@@ -138,25 +142,20 @@ function _field:spawn_entity(card, loc)
      assert(card and loc, "Given loc or card is invalid")
      card.mob.handler_uuid = card.handler_uuid
      self.tiles:spawn_entity(card.mob, loc)
+     self.active_cards:put(card)
 end
 
 function _field:proceed_turn()
      battle_loop(self)
-     -- all_cards_to_graveyard()
-     local entities = self.tiles:get_entities()
-     -- TODO: Can be optimized, by wrapping it with parent table.
-     for uuid, v in pairs(entities) do
-          local target = nil
-          if uuid == self.first_user.uuid then target = self.first_user
-          elseif uuid == self.second_user.uuid then target = self.second_user end
-          if #v == 0 then target.stocks = target.stocks - 1 end
-     end
+     local target = self.users[self.active_cards:get_empty_deck_owner()]
+     target.stocks = target.stocks - 1
      self.tiles:clear()
+     all_cards_to_graveyard(self)
 
      local ctx = is_game_ended(self)
      if ctx.ended then
           EventManager.notify({
-               winner = ctx.winner
+               lose = ctx.lose
           }, "GAME_END")
           return
      end
