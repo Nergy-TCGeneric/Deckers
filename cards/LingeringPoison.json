@@ -1,0 +1,7 @@
+{
+    "name_id":"magic:lingering_poison_card",
+    "type":"MAGIC",
+    "cost_type":"MANA",
+    "cost":3,
+    "action_id":"magic:lingering_poison"
+}

@@ -1,0 +1,7 @@
+{
+    "name_id":"equipment:trident_card",
+    "type":"EQUIPMENT",
+    "cost_type":"ACTION",
+    "cost":1,
+    "action_id":"equipment:trident"
+}

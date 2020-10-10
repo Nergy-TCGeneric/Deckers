@@ -28,6 +28,13 @@ function __tiles:get_entity_location(entity)
     return nil
 end
 
+function __tiles:get_entity_at(loc)
+    for _, tile in pairs(self.tile) do
+        if tile.loc == loc then return tile end
+    end
+    return nil
+end
+
 function __tiles:spawn_entity(entity, loc)
     local occupied = get_occupying_area(loc, entity.size)
     if occupied[2].x > self.size or occupied[2].y + entity.size > self.size or loc.x < 1 or loc.y < 1 or loc.x > self.size or loc.y > self.size then return false end

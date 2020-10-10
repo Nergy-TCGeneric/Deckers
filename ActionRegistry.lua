@@ -5,6 +5,7 @@ local __actions = {}
     Action function MUST have these parameters:
     #1. 'field', a field instance.
     #2. 'target_ctx', a target context. could be a function(with parameter 'field' and 'target_ctx') or a table.
+    #3. 'invoker', a user invoked this action.
 ]]
 
 function __registry.register(id, act_func)
@@ -21,10 +22,7 @@ function __registry.unregister_all()
 end
 
 function __registry.get(id)
-    if __actions[id] == nil then return nil end
-    local clone = {}
-    for k, v in pairs(__actions[id]) do clone[k] = v end
-    return clone
+    return __actions[id]
 end
 
 return __registry

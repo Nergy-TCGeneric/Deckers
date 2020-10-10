@@ -1,7 +1,11 @@
 -- Field test
 local Field = require "./Field"
 local EntityCard = require "./EntityCard"
+local CardType = require "./CardType"
+local TargetingCard = require "./TargetingCard"
 local EntityRegistry = require "./EntityRegistry"
+local ActionRegistry = require "./ActionRegistry"
+local CardRegistry = require "./CardRegistry"
 local EventHandlerInterface = require "./EventHandlerInterface"
 local EventManager = require "./EventManager"
 
@@ -48,27 +52,66 @@ local function func3()
         move_range = 1,
         entity_id = "entity:killer"
     })
-    f1:spawn_entity(EntityCard:create("some_uuid4_format", "fake_one", "fake_uuid_1", "entity:killer"), {x = 1, y = 1})
-    f1:spawn_entity(EntityCard:create("other_uuid4_format", "fake_two", "fake_uuid_2", "entity:spider"), {x = 7, y = 7})
+    CardRegistry.register({
+        type = CardType.mob,
+        name_id = "fake_one",
+        mob_id = "entity:spider"
+    })
+    CardRegistry.register({
+        type = CardType.mob,
+        name_id = "fake_two",
+        mob_id = "entity:killer"
+    })
+    local c1, c2 = CardRegistry.get("fake_one"), CardRegistry.get("fake_two")
+    c1.handler_uuid = "fake_uuid_2"
+    c2.handler_uuid = "fake_uuid_1"
+    f1:spawn_entity(c1, {x = 1, y = 1})
+    f1:spawn_entity(c2, {x = 7, y = 7})
 
     local test_handler = EventHandlerInterface:create()
     test_handler.update = function(self, event)
         assert(event and type(event) == "table", "#4. Entity death event didn't propagated properly")
         assert(event.killer.handler_uuid == "fake_uuid_1"
             and event.victim.handler_uuid == "fake_uuid_2", "#4-1. Handler's uuid doesn't match")
-        -- Assuming the victim failed to retaliate
+        -- The victim fail to retaliate, because of its 'neutral' behavior
         assert(event.killer.lifepoint == 25
             and event.victim.lifepoint == -5, "#4-2. Expected lifepoint and actual lifepoint doesn't match")
         assert(event.victim.behavior == "HOSTILE", "#4-3. Expected behavior and actual behavior doesn't match")
     end
     EventManager.register(test_handler, "ENTITY_DEATH")
     f1:proceed_turn()
+    EventManager.unregister_all()
+end
+
+-- Test #4. Applying a targeting card to a specific entity.
+local function func4()
+    local f1 = Field:create_instance({uuid="fake_uuid_1", selected_deck = {}}, {uuid="fake_uuid_2", selected_deck={}})
+    ActionRegistry.register("aux_action", function(field, target_ctx, invoker)
+        if target_ctx.target == nil then return end
+        assert(target_ctx.target.atk_str == 2, "#1. Invalid target context is given")
+        target_ctx.target.atk_str = target_ctx.target.atk_str + 4
+        assert(target_ctx.target.atk_str == 6, "#2. Failed to apply action")
+    end)
+    local c1, c2 = CardRegistry.get("fake_one"), CardRegistry.get("fake_two")
+    c1.handler_uuid = "fake_uuid_1"
+    c2.handler_uuid = "fake_uuid_2"
+    f1:spawn_entity(c1, {x=1, y=1})
+    f1:spawn_entity(c2, {x=7, y=7})
+    CardRegistry.register({
+        type= CardType.equipment,
+        name_id= "dead-beef-cards",
+        cost_type= "ACTION",
+        cost= 1,
+        action_id= "aux_action"
+    })
+    f1:apply_card(CardRegistry.get("dead-beef-cards"), {x=1,y=1})
 end
 
 function _test.test_all()
     func1()
     func2()
     func3()
+    func4()
     EntityRegistry.unregister_all()
     EventManager.unregister_all()
     print("Passed all Field tests")

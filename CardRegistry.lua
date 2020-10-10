@@ -37,7 +37,6 @@ function _registry.register(card)
         target = EntityCard:create(
             GenerateUUID(),
             card.name_id,
-            nil,
             card.mob_id
         )
     elseif card.type == CardType.biome or card.type == CardType.equipment or card.type == CardType.magic or card.type == CardType.special then
@@ -45,7 +44,6 @@ function _registry.register(card)
             GenerateUUID(),
             card.name_id,
             card.type,
-            nil,
             card.cost_type,
             card.cost,
             card.action_id

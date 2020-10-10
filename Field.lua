@@ -53,7 +53,6 @@ local function is_game_ended(field)
      return ctx
 end
 
--- Remind that 'Commander' requires only two players
 local function set_entity_target(field, entity)
      math.randomseed(os.time())
      local opponent = field.active_cards:get_opponent_deck(entity.handler_uuid)
@@ -74,10 +73,10 @@ local function calculate_pathway(from, to, length) -- returns sequence of {dx, d
                t[idx] = total[idx] / math.abs(total[idx])
                total[idx] = total[idx] - (total[idx] / math.abs(total[idx]))
           else
-               if idx == 1 then
+               if idx == 1 and total[idx] > 0 then
                     t[2] = total[2] / math.abs(total[2])
                     total[2] = total[2] - (total[2] / math.abs(total[2]))
-               elseif idx == 2 then 
+               elseif idx == 2 and total[idx] > 0 then 
                     t[1] = total[1] / math.abs(total[1])
                     total[1] = total[1] - (total[1] / math.abs(total[1]))
                end
@@ -109,6 +108,7 @@ end
 local function battle_loop(field)
      for _, tile in pairs(field.tiles:list()) do set_entity_target(field, tile.entity) end
      while not field.active_cards:get_empty_deck_owner() do
+          -- TODO: Don't loop like this
           for _, tile in pairs(field.tiles:list()) do
                -- TODO: Move every unit, at a single turn. this method just only moves one unit at that time.
                local L1, L2 = field.tiles:get_entity_location(tile.entity), field.tiles:get_entity_location(tile.entity.target)
@@ -141,9 +141,25 @@ end
 
 function _field:spawn_entity(card, loc)
      assert(card and loc, "Given loc or card is invalid")
+     assert(card.type == "MOB", "spawn_entity() only accepts mob type cards")
+     if card.type ~= "MOB" then return end
      card.mob.handler_uuid = card.handler_uuid
      self.tiles:spawn_entity(card.mob, loc)
      self.active_cards:put(card)
+end
+
+function _field:apply_card(card, loc)
+     assert(card and loc, "Given loc or card is invalid")
+     assert(card.type ~= "MOB", "apply_card() only accepts non-mob type cards")
+     local target = self.tiles:get_entity_at(loc)
+     card:act(self, target, card.handler_uuid)
+     EventManager.notify({
+          card = card,
+          invoker = card.handler_uuid,
+          field = self
+     }, "CARD_DRAW")
+     self.graveyard:push(card)
+     -- TODO: Remove cards from user.available_cards
 end
 
 function _field:proceed_turn()
@@ -164,6 +180,8 @@ function _field:proceed_turn()
      EventManager.notify({
           phase = self.phase
      }, "PHASE_START")
+     
+     self.biome = BiomeType.plains
 end
 
 return _field

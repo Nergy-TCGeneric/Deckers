@@ -21,6 +21,7 @@ function __deck:remove(uuid, idx)
 end
 
 function __deck:remove_by_card(card)
+    assert(card.handler_uuid, "To remove a card, a handler uuid must be required")
     for i, c in ipairs(self.__cards[card.handler_uuid]) do
         if c == card then self:remove(card.handler_uuid, i) break end
     end
