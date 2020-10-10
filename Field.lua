@@ -69,14 +69,14 @@ local function calculate_pathway(from, to, length) -- returns sequence of {dx, d
      -- TODO: Clarify parameter type
      for i=0,math.min(math.abs(total[1])+math.abs(total[2]), length) do
           local t, idx = {0, 0}, math.random(2)
-          if total[idx] > 0 then
+          if total[idx] ~= 0 then
                t[idx] = total[idx] / math.abs(total[idx])
                total[idx] = total[idx] - (total[idx] / math.abs(total[idx]))
           else
-               if idx == 1 and total[idx] > 0 then
+               if idx == 1 and total[idx] ~= 0 then
                     t[2] = total[2] / math.abs(total[2])
                     total[2] = total[2] - (total[2] / math.abs(total[2]))
-               elseif idx == 2 and total[idx] > 0 then 
+               elseif idx == 2 and total[idx] ~= 0 then 
                     t[1] = total[1] / math.abs(total[1])
                     total[1] = total[1] - (total[1] / math.abs(total[1]))
                end
@@ -159,7 +159,6 @@ function _field:apply_card(card, loc)
           field = self
      }, "CARD_DRAW")
      self.graveyard:push(card)
-     -- TODO: Remove cards from user.available_cards
 end
 
 function _field:proceed_turn()

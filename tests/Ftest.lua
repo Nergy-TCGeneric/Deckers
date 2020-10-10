@@ -83,7 +83,7 @@ local function func3()
     EventManager.unregister_all()
 end
 
--- Test #4. Applying a targeting card to a specific entity.
+-- Test #4. Applying a targeting card(equipment) to a specific entity.
 local function func4()
     local f1 = Field:create_instance({uuid="fake_uuid_1", selected_deck = {}}, {uuid="fake_uuid_2", selected_deck={}})
     ActionRegistry.register("aux_action", function(field, target_ctx, invoker)
