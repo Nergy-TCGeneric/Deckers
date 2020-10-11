@@ -64,24 +64,15 @@ end
 local function calculate_pathway(from, to, length) -- returns sequence of {dx, dy} with given 'length'
      assert(length > 0, "Length must be greater than 0")
      local pathway = {}
-     local total = {to.x - from.x, to.y - from.y}
+     local total = {[-1]= to.x - from.x, [1]= to.y - from.y}
      math.randomseed(os.time())
-     -- TODO: Clarify parameter type
-     for i=0,math.min(math.abs(total[1])+math.abs(total[2]), length) do
-          local t, idx = {0, 0}, math.random(2)
-          if total[idx] ~= 0 then
-               t[idx] = total[idx] / math.abs(total[idx])
-               total[idx] = total[idx] - (total[idx] / math.abs(total[idx]))
-          else
-               if idx == 1 and total[idx] ~= 0 then
-                    t[2] = total[2] / math.abs(total[2])
-                    total[2] = total[2] - (total[2] / math.abs(total[2]))
-               elseif idx == 2 and total[idx] ~= 0 then 
-                    t[1] = total[1] / math.abs(total[1])
-                    total[1] = total[1] - (total[1] / math.abs(total[1]))
-               end
-          end
-          table.insert(pathway, {x = t[1], y=t[2]})
+     for i=1,math.min(math.abs(total[-1])+math.abs(total[1]), length) do
+          local t, idx = {[-1] = 0, [1] = 0}, (math.random(2) - 2 >= 0) and -1 or 1
+          if total[-1] == 0 and total[1] == 0 then break end
+          if total[idx] == 0 then idx = -1 * idx end
+          t[idx] = total[idx] / math.abs(total[idx])
+          total[idx] = total[idx] - t[idx]
+          table.insert(pathway, {x = t[-1], y=t[1]})
      end
      return pathway
 end
@@ -108,11 +99,8 @@ end
 local function battle_loop(field)
      for _, tile in pairs(field.tiles:list()) do set_entity_target(field, tile.entity) end
      while not field.active_cards:get_empty_deck_owner() do
-          -- TODO: Don't loop like this
           for _, tile in pairs(field.tiles:list()) do
-               -- TODO: Move every unit, at a single turn. this method just only moves one unit at that time.
                local L1, L2 = field.tiles:get_entity_location(tile.entity), field.tiles:get_entity_location(tile.entity.target)
-               if not (L1 and L2) then break end
                if field.tiles:distance(L1, L2) <= tile.entity.atk_range and tile.entity.behavior == "HOSTILE" then
                     attack_entity(tile.entity, tile.entity.target, field)
                else

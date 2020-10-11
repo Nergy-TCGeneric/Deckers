@@ -90,7 +90,7 @@ local function func4()
         if target_ctx.target == nil then return end
         assert(target_ctx.target.atk_str == 2, "#1. Invalid target context is given")
         target_ctx.target.atk_str = target_ctx.target.atk_str + 4
-        assert(target_ctx.target.atk_str == 6, "#2. Failed to apply action")
+        assert(target_ctx.target.atk_str == 6, "#2. Failed to apply an action")
     end)
     local c1, c2 = CardRegistry.get("fake_one"), CardRegistry.get("fake_two")
     c1.handler_uuid = "fake_uuid_1"
@@ -114,6 +114,7 @@ function _test.test_all()
     func4()
     EntityRegistry.unregister_all()
     EventManager.unregister_all()
+    CardRegistry.unregister_all()
     print("Passed all Field tests")
 end
 

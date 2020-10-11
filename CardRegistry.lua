@@ -54,6 +54,10 @@ function _registry.register(card)
     __cards[card.name_id] = target
 end
 
+function _registry.unregister_all()
+    __cards = {}
+end
+
 function _registry.get(card_id)
     assert(card_id, "Card id is invalid!")
     if __cards[card_id] == nil then return nil end
