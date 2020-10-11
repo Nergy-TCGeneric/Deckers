@@ -20,13 +20,12 @@ local _field = {}
      7. active_cards : instance of Deck.
 ]]
 
--- TODO: Load these values from global config.yml
-local function get_initial_userstat(user_data)
+local function get_initial_userstat(user_data, config)
      return {
-          stocks = 2,
+          stocks = config.get("default_stocks"),
           available_cards = user_data.selected_deck,
-          manas = 10,
-          actions = 2
+          manas = config.get("default_mana"),
+          actions = config.get("default_action")
      }
 end
 
@@ -111,14 +110,14 @@ local function battle_loop(field)
      end
 end
 
-function _field:create_instance(first_userdata, second_userdata)
+function _field:create_instance(first_userdata, second_userdata, config)
      assert(first_userdata and second_userdata, "One of given userdata is invalid.")
      local inst = setmetatable({}, self)
      self.__index = self
      inst.id = GenerateUUID()
      inst.users = {}
-     inst.users[first_userdata.uuid] = get_initial_userstat(first_userdata)
-     inst.users[second_userdata.uuid] = get_initial_userstat(second_userdata)
+     inst.users[first_userdata.uuid] = get_initial_userstat(first_userdata, config)
+     inst.users[second_userdata.uuid] = get_initial_userstat(second_userdata, config)
      inst.phase = 0
      inst.biome = BiomeType.plains
      inst.tiles = TileData:create(8)

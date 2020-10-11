@@ -1,0 +1,4 @@
+debug: "debug"
+default_stocks: 2
+default_mana: 10
+default_action: 2

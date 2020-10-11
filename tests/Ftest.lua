@@ -8,20 +8,21 @@ local ActionRegistry = require "./ActionRegistry"
 local CardRegistry = require "./CardRegistry"
 local EventHandlerInterface = require "./EventHandlerInterface"
 local EventManager = require "./EventManager"
+local ConfigLoader = require "./ConfigLoader"
 
 local _test = {}
 
 -- Test #1: Creating and retrieving Field instance
 local function func1()
-    local f = Field:create_instance({uuid = "fake_uuid_1", selected_deck = {}}, {uuid = "fake_uuid_2", selected_deck = {}})
+    local f = Field:create_instance({uuid = "fake_uuid_1", selected_deck = {}}, {uuid = "fake_uuid_2", selected_deck = {}}, ConfigLoader)
     assert(f.users["fake_uuid_1"] and f.users["fake_uuid_2"], "#1. Failed to store userdata properly")
     assert(f.phase == 0, "#2. Failed to set default value while creating field instance")
 end
 
 -- Test #2: Isloation test
 local function func2()
-    local f1 = Field:create_instance({uuid = "fake_uuid_1", selected_deck={}}, {uuid = "fake_uuid_2", selected_deck={}})
-    local f2 = Field:create_instance({uuid = "fake_uuid_3", selected_deck={}}, {uuid = "fake_uuid_4", selected_deck={}})
+    local f1 = Field:create_instance({uuid = "fake_uuid_1", selected_deck={}}, {uuid = "fake_uuid_2", selected_deck={}}, ConfigLoader)
+    local f2 = Field:create_instance({uuid = "fake_uuid_3", selected_deck={}}, {uuid = "fake_uuid_4", selected_deck={}}, ConfigLoader)
     assert(f1 ~= f2, "#1. Two fields are MUST NOT be identical")
     assert(f1.users["fake_uuid_1"] and f1.users["fake_uuid_2"], "#2. Fields are not isolated")
     assert(f2.users["fake_uuid_3"] and f2.users["fake_uuid_4"], "#3. Fields are not isolated")
@@ -29,7 +30,7 @@ end
 
 -- Test #3: Putting some fake cards and proceeding turn. Does death event invoked with expected data?
 local function func3()
-    local f1 = Field:create_instance({uuid = "fake_uuid_1", selected_deck = {}}, {uuid = "fake_uuid_2", selected_deck = {}})
+    local f1 = Field:create_instance({uuid = "fake_uuid_1", selected_deck = {}}, {uuid = "fake_uuid_2", selected_deck = {}}, ConfigLoader)
     EntityRegistry.register({
         lifepoint = 15,
         atk_str = 2,
@@ -85,7 +86,7 @@ end
 
 -- Test #4. Applying a targeting card(equipment) to a specific entity.
 local function func4()
-    local f1 = Field:create_instance({uuid="fake_uuid_1", selected_deck = {}}, {uuid="fake_uuid_2", selected_deck={}})
+    local f1 = Field:create_instance({uuid="fake_uuid_1", selected_deck = {}}, {uuid="fake_uuid_2", selected_deck={}}, ConfigLoader)
     ActionRegistry.register("aux_action", function(field, target_ctx, invoker)
         if target_ctx.target == nil then return end
         assert(target_ctx.target.atk_str == 2, "#1. Invalid target context is given")
@@ -108,6 +109,7 @@ local function func4()
 end
 
 function _test.test_all()
+    ConfigLoader.load("./config.yml")
     func1()
     func2()
     func3()
