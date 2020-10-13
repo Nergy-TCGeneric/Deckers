@@ -1,7 +1,7 @@
-local UDT = require "./tests/UDtest"
-local CRT = require "./tests/CRtest"
-local FT = require "./tests/Ftest"
-local EM = require "./tests/EMtest"
+local UDT = require "./UDtest"
+local CRT = require "./CRtest"
+local FT = require "./Ftest"
+local EM = require "./EMtest"
 
 local _Itest = {}
 

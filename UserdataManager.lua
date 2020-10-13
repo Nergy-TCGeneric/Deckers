@@ -10,9 +10,10 @@ end
 function __manager.deserialize(uuid)
     assert(type(uuid)=="string", "Given uuid must be a string type.")
     if cache[uuid] then return cache[uuid] end
-    f = io.open(string.format("./users/%s.json", uuid))
+    -- TODO: Assuming the user uses 'windows'. Create a related function to get a file properly.
+    local f = io.open(string.format("./plugins/BarmEssentials/units/commander.lkt/users/%s.json", uuid))
     local status, retval = pcall(function()
-        data = json.decode(f:read("*a"))
+        local data = json.decode(f:read("*a"))
         return data
     end)
     f:close()
@@ -25,7 +26,7 @@ end
 function __manager.serialize(user_data)
     assert(user_data, "Given user data must not be null")
     assert(is_valid_userdata(user_data), "Not a valid user data")
-    f = io.open(string.format("./users/%s.json", user_data.uuid), "w+")
+    local f = io.open(string.format("./plugins/BarmEssentials/units/commander.lkt/users/%s.json", user_data.uuid), "w+")
     local status, retval = pcall(function()
         data = json.encode(user_data)
         return data

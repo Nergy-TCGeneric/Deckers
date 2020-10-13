@@ -1,13 +1,13 @@
 -- Field test
-local Field = require "./Field"
-local EntityCard = require "./EntityCard"
-local CardType = require "./CardType"
-local TargetingCard = require "./TargetingCard"
-local EntityRegistry = require "./EntityRegistry"
-local ActionRegistry = require "./ActionRegistry"
-local CardRegistry = require "./CardRegistry"
-local EventHandlerInterface = require "./EventHandlerInterface"
-local EventManager = require "./EventManager"
+local Field = require "../Field"
+local EntityCard = require "../EntityCard"
+local CardType = require "../CardType"
+local TargetingCard = require "../TargetingCard"
+local EntityRegistry = require "../EntityRegistry"
+local ActionRegistry = require "../ActionRegistry"
+local CardRegistry = require "../CardRegistry"
+local EventHandlerInterface = require "../EventHandlerInterface"
+local EventManager = require "../EventManager"
 
 local _test = {}
 

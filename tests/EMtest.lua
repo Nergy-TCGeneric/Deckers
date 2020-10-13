@@ -1,5 +1,5 @@
-local EventManager = require "./EventManager"
-local IEventHandler = require "./EventHandlerInterface"
+local EventManager = require "../EventManager"
+local IEventHandler = require "../EventHandlerInterface"
 
 local _test = {}
 
