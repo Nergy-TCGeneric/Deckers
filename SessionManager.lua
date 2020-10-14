@@ -21,4 +21,10 @@ function __manager.remove(id)
     __sessions[id] = nil
 end
 
+function __manager.size()
+    local s = 0
+    for _, __ in pairs(__sessions) do s = s + 1 end
+    return s
+end
+
 return __manager

@@ -1,5 +1,6 @@
 local UDT = require "./UDtest"
 local CRT = require "./CRtest"
+local CT = require "./Ctest"
 local FT = require "./Ftest"
 local EM = require "./EMtest"
 

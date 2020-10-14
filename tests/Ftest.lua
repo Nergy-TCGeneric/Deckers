@@ -8,6 +8,7 @@ local ActionRegistry = require "../ActionRegistry"
 local CardRegistry = require "../CardRegistry"
 local EventHandlerInterface = require "../EventHandlerInterface"
 local EventManager = require "../EventManager"
+local ConfigLoader = require "../ConfigLoader"
 
 local _test = {}
 
@@ -108,7 +109,7 @@ local function func4()
 end
 
 function _test.test_all()
-    ConfigLoader.load("./config.yml")
+    ConfigLoader.load("./plugins/BarmEssentials/units/commander.lkt/config.yml")
     func1()
     func2()
     func3()
